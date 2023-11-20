@@ -1,0 +1,36 @@
+version: "3.7"
+services:
+  myfirstapp:
+    image: nginx
+    container_name: myfirstapp
+    ports:
+      - "80"
+    volumes:
+      - ./myfirstapp/index.html:/usr/share/nginx/html/index.html
+    networks:
+      - myNetwork
+
+  mysecondapp:
+    image: nginx
+    container_name: mysecondapp
+    ports:
+      - "80"
+    volumes:
+      - ./mysecondapp/index.html:/usr/share/nginx/html/index.html
+    networks:
+      - myNetwork
+  server:
+    image: nginx
+    container_name: server
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./proxy/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./proxy/backend-not-found.html:/var/www/html/backend-not-found.html
+      - ./proxy/includes/:/etc/nginx/includes/
+      - ./proxy/ssl/:/etc/ssl/certs/nginx/
+    networks:
+      - myNetwork
+networks:
+  myNetwork:
