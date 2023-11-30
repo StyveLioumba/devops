@@ -54,3 +54,21 @@ set1.discard(30)
 print(set1)
 ```
 
+## EXO 2: 
+
+```Python
+dico = {"banane": 1.5, "pomme": 0.5, "dentifrice": 3,"eau": 1,"salade": 4}
+basket = {"banane": 1, "pomme": 2, "dentifrice": 0,"eau": 1,"salade": 5}
+basket2 = {"banane": 2, "pomme": 4, "dentifrice": 1,"eau": 5,"salade": 0}
+
+somme = 0
+for i in basket:
+    somme += basket[i] * dico[i]
+    
+somme2 = 0
+for i in basket2:
+    somme2 += basket2[i] * dico[i]
+    
+print(f"Le prix du panier est de {somme}€")
+print(f"Le prix du panier est de {somme2}€")
+```
