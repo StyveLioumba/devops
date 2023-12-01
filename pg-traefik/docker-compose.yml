@@ -1,31 +1,8 @@
 version: "3.9"
 
 services:
-  # TRAEFIK
 
-  traefik:
-    restart: unless-stopped
-    image: traefik:v2.0.2
-    container_name: traefik
-    ports:
-      - "80:80"
-      - "443:443"
-      - "8000:8000"
-    
-    labels:
-      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
-      # "admin" middleware definition
-      # to be used by services that do not have their own security
-      - "traefik.http.middlewares.test-auth.basicauth.users=test:$$apr1$$H6uskkkW$$IgXLP6ewTrSuBkTrqE8wj/,test2:$$apr1$$d9hr9HBB$$4HxwgUir3HP4EsggP/QNo0"
-
-    volumes:
-      - ./traefik.yml:/etc/traefik/traefik.yml
-      - ./tls.yml:/etc/traefik/tls.yml
-      - /var/run/docker.sock:/var/run/docker.sock
-      - certs:/etc/ssl/traefik
-    networks:
-      - dev
-
+  # Reverse proxy helper
   reverse-proxy-https-helper:
     image: alpine
     command: sh -c "cd /etc/ssl/traefik
@@ -36,7 +13,30 @@ services:
     networks:
       - dev
 
-  # APPLICATIONS 524785
+  # TRAEFIK
+  traefik:
+    restart: unless-stopped
+    image: traefik:v2.0.2
+    container_name: traefik
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    
+    labels:
+      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
+
+    volumes:
+      - ./traefik.yml:/etc/traefik/traefik.yml
+      - ./tls.yml:/etc/traefik/tls.yml
+      - /var/run/docker.sock:/var/run/docker.sock
+      - certs:/etc/ssl/traefik
+    networks:
+      - dev
+    depends_on:
+      - reverse-proxy-https-helper
+
+  # APPLICATIONS
   
   nginx:
     image: nginx:latest
@@ -44,8 +44,8 @@ services:
     labels:
       - "traefik.http.routers.nginx.rule=Host(`nginx.traefik.me`)"
       - "traefik.http.routers.nginx-tls.tls.domains[0].main=nginx.traefik.me"
-      - "traefik.http.routers.nginx-tls.tls.domains[0].sans=nginx-*.traefik.me"
       - "traefik.http.routers.nginx-tls.tls=true"
+      - "traefik.http.routers.nginx-tls.entrypoints=https"
     networks:
       - dev
   app1:
@@ -54,8 +54,8 @@ services:
     labels:
       - "traefik.http.routers.app1.rule=Host(`app1.traefik.me`)"
       - "traefik.http.routers.app1-tls.tls.domains[0].main=app1.traefik.me"
-      - "traefik.http.routers.app1-tls.tls.domains[0].sans=app1-*.traefik.me"
-      - "traefik.http.routers.nginx-tls.tls=true"
+      - "traefik.http.routers.app1-tls.tls=true"
+      - "traefik.http.routers.app1-tls.entrypoints=https"
     networks:
       - dev
 
