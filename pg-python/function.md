@@ -32,10 +32,7 @@ print(renvoie_double(5))
 
 ```Python
 def renvoie_bool(data):
-    if isinstance(data, int):
-        return True
-    else:
-        return False
+    return isinstance(data, int)
 
 print(renvoie_bool(5))
 ```
