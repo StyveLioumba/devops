@@ -1,0 +1,35 @@
+version: '3'
+services:
+
+  mysql_db:
+    image: mysql:5.6.51
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: shop_db
+      MYSQL_USER: prestaWordpress
+      MYSQL_PASSWORD: prestaWordpress
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - mydb:/var/lib/mysql
+
+  prestashop:
+    container_name: prestashop
+    image: prestashop/prestashop:8-apache
+    ports:
+      - "80:80"
+    environment:
+      DB_SERVER: mysql_db
+      DB_NAME: shop_db
+      DB_USER: prestaWordpress
+      DB_PASSWD: prestaWordpress
+      PS_FOLDER_ADMIN: devadmin
+      PS_FOLDER_INSTALL: devinstall
+      PS_ENABLE_SSL: 1
+      PS_DOMAIN: wakclouddevpresta.azurewebsites.net
+    volumes:
+      - ps:/var/www/html
+
+volumes:
+  ps:
+  mydb:

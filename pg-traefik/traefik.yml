@@ -1,4 +1,5 @@
-logLevel: INFO
+log:
+  Level: INFO
 
 api:
   insecure: true
@@ -8,8 +9,15 @@ api:
 entryPoints:
   http:
     address: ":80"
+    http:
+      redirections: # HTTPS redirection (80 to 443)
+        entryPoint:
+          to: "https"                         # The target element
+          scheme: "https"                     # The redirection target scheme
   https:
     address: ":443"
+
+
 
 providers:
   file:

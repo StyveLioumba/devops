@@ -1,0 +1,31 @@
+version: "3.9"
+services:
+  mysql_db:
+    image: mysql:8.0.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: shop_db
+      MYSQL_USER: prestaWordpress
+      MYSQL_PASSWORD: prestaWordpress
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - db:/var/lib/mysql
+
+  wordpress:
+    image: wordpress:5.8.2-php7.4-apache
+    container_name: wordpress
+    ports:
+      - "80:80"
+    volumes:
+      - wordpress:/var/www/html
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: mysql_db
+      WORDPRESS_DB_USER: prestaWordpress
+      WORDPRESS_DB_PASSWORD: prestaWordpress
+      WORDPRESS_DB_NAME: shop_db
+
+volumes:
+  wordpress:
+  db:

@@ -3,20 +3,34 @@ version: "3"
 services:
 
   # Reverse proxy helper
+#  reverse-proxy-https-helper:
+#    image: alpine
+#    command: sh -c "cd /etc/ssl/traefik
+#      && wget traefik.me/cert.pem -O cert.pem
+#      && wget traefik.me/privkey.pem -O privkey.pem"
+#    volumes:
+#      - certs:/etc/ssl/traefik
+#    networks:
+#      - dev
+  # Reverse proxy helper generate letsencrypt certificate
   reverse-proxy-https-helper:
-    image: alpine
-    command: sh -c "cd /etc/ssl/traefik
-      && wget traefik.me/cert.pem -O cert.pem
-      && wget traefik.me/privkey.pem -O privkey.pem"
+    image: almalinux
+    container_name: proxy
+    command:
+      - sh
+      - -c
+      - |
+        tail -f /dev/null
     volumes:
-      - certs:/etc/ssl/traefik
+        - certs:/etc/ssl/traefik
+        - ./letsencrypt:/etc/letsencrypt
     networks:
-      - dev
+        - dev
 
   # TRAEFIK
   traefik:
     restart: unless-stopped
-    image: traefik:v2.0.2
+    image: traefik:v2.10
     container_name: traefik
     ports:
       - "80:80"
@@ -25,6 +39,8 @@ services:
     
     labels:
       - "traefik.http.services.traefik.loadbalancer.server.port=8080"
+      - "traefik.http.routers.traefik.rule=Host(`local.traefik.me`)"
+      - "traefik.http.routers.traefik.entrypoints=https"
 
     volumes:
       - ./traefik.yml:/etc/traefik/traefik.yml
