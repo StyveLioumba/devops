@@ -1,0 +1,4 @@
+[2024-07-05 12:24:24.712017] Admidio.ERROR: Organization could not be found! {"$g_organization":"GBV"} {"file":"/opt/app-root/src/adm_program/system/common.php","line":122,"class":null,"callType":null,"function":"require_once"}
+[2024-07-05 12:24:32.192274] Admidio.ERROR: Organization could not be found! {"$g_organization":"GBV"} {"file":"/opt/app-root/src/adm_program/system/common.php","line":122,"class":null,"callType":null,"function":"require_once"}
+[2024-07-05 12:24:41.322776] Admidio.ERROR: Organization could not be found! {"$g_organization":"GBV"} {"file":"/opt/app-root/src/adm_program/system/common.php","line":122,"class":null,"callType":null,"function":"require_once"}
+[2024-07-05 12:24:44.393400] Admidio.ERROR: Organization could not be found! {"$g_organization":"GBV"} {"file":"/opt/app-root/src/adm_program/system/common.php","line":122,"class":null,"callType":null,"function":"require_once"}

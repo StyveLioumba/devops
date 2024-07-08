@@ -1,0 +1,13 @@
+- hosts: masters
+  become: yes
+  tasks:
+    - name: Download Github repository
+      git:
+        repo: 'https://github.com/StyveLioumba/monitoring-alerting.git'
+        dest: /home/vagrant/monitoring-alerting
+        version: main
+
+    - name: Run Prometheus and Grafana
+      command: docker compose -f /home/vagrant/monitoring-alerting/docker-compose.yml up -d
+      args:
+        chdir: /home/vagrant/monitoring-alerting

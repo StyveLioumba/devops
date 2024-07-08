@@ -1,0 +1,55 @@
+version: "3.9"
+
+# https://github.com/Admidio/admidio/blob/master/README-Docker.md
+
+services:
+  admidio-test-db:
+    restart: unless-stopped
+    image: mariadb:11.1.2-jammy
+    container_name: admidio-test-mariaDB
+    volumes:
+      - "./admidio-test/mariadb/config:/etc/mysql/conf.d"
+      - "./admidio-test/mariadb/data:/var/lib/mysql"
+    ports:
+      - 3308:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpasswd
+      - MYSQL_DATABASE=admidio
+      - MYSQL_USER=admidio
+      - MYSQL_PASSWORD=password
+    # healthcheck:
+    #   test: ["CMD", "mysqladmin", "ping", "-u", "root", "--password=rootpasswd"]
+    #   interval: 10s
+    #   timeout: 10s
+    #   retries: 5
+    security_opt:
+      - "seccomp:unconfined"
+
+  admidio:
+    restart: unless-stopped
+    image: admidio/admidio:branch_v4.3
+    # image: schast/admidio:branch_v4.3
+    container_name: admidio-test-app
+    depends_on:
+      - admidio-test-db
+    volumes:
+      - ./admidio-test/files:/opt/app-root/src/adm_my_files
+      - ./admidio-test/themes:/opt/app-root/src/adm_themes
+      - ./admidio-test/plugins:/opt/app-root/src/adm_plugins
+    ports:
+      - 3100:8080
+    environment:
+      - ADMIDIO_DB_TYPE=mysql
+      - ADMIDIO_DB_HOST=admidio-test-db:3306
+      - ADMIDIO_DB_NAME=admidio
+      - ADMIDIO_DB_USER=admidio
+      - ADMIDIO_DB_PASSWORD=password
+      - ADMIDIO_DB_TABLE_PRAEFIX=adm
+      - ADMIDIO_MAIL_RELAYHOST=192.168.10.10:25
+      - ADMIDIO_LOGIN_FOR_UPDATE=1
+      - ADMIDIO_ORGANISATION=GBV
+      - ADMIDIO_PASSWORD_HASH_ALGORITHM=DEFAULT
+      - TZ=Europe/Vienna
+      - ADMIDIO_ROOT_PATH=http://localhost:3100
+    security_opt:
+      - "seccomp:unconfined"
